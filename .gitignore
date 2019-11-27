@@ -1,2 +1,5 @@
 credentials.json
 token.pickle
+__pycache__/
+calls_info_*
+chromedriver
