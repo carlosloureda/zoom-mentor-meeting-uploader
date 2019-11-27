@@ -141,13 +141,13 @@ def upload_to_google_drive(src_folder, parent_folder_id):
             fileId = file.get('id')
             # Grant permission
             try:
-                permission = service.permissions().create(
+                service.permissions().create(
                     fileId=fileId,
                     body={
                         "role": 'reader',
                         "type": 'anyone'
                     }
-                )
+                ).execute()
                 webViewLink = service.files().get(
                     fileId=fileId,
                     fields="webViewLink"

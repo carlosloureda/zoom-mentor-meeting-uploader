@@ -87,5 +87,4 @@ Go to https://developers.google.com/drive/api/v3/quickstart/python
 # TO DO
 
 - Fix end of script
-- Check file permissions
 - Save links to file with today files
