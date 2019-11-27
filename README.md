@@ -17,6 +17,21 @@ Testing on other platforms will be appreciated.
     - Add in your index.py the folder where to track the changes for the Zoom apps:
     ZOOM_FOLDER_PATH= "/home/carlos/Videos/Zoom"
 
+    - Google Drive Python API:
+    pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
+
+    - On first attempt you will be prompted the google auth page (unauthorized),
+    <!-- TODO: will add some images -->
+
+### Get Google Drive API
+
+Go to https://developers.google.com/drive/api/v3/quickstart/python
+
+1. Turn on the Drive API
+   ![turn_on_api]("./img/1_google_drive.png")
+
+2. Download the crendetials file (`credentials.json`) and save into the working directory of this script
+
 ## How it works
 
 1. Start the script
@@ -32,6 +47,13 @@ Testing on other platforms will be appreciated.
 
    > We will listen for the "moved" event as it is the event fired when the mp4 file is renamed
    > The script will print the final folder when the recorded is finished rendering
+
+3. Upload folder to Drive
+   - You need the API_KEY for drive and the Google API Key
+   - You need to have the folder for zoom meeting apps created and pass it to the scriptÇ:
+     - If there is a folder for that student, the script will upload the folder to that folder
+     - If there isn't a folder for that student.
+   - It will get the sharable link for the .mp4 file so we can paste it on the google forms
 
 ## Ideas for the script
 
