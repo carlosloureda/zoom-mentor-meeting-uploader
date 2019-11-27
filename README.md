@@ -34,7 +34,7 @@ Testing on other platforms will be appreciated.
 Go to https://developers.google.com/drive/api/v3/quickstart/python
 
 1. Turn on the Drive API
-   ![turn_on_api]("https://github.com/carlosloureda/zoom-mentor-meeting-uploader/blob/master/img/1_google_drive.png")
+   ![turn_on_api]("https://github.com/carlosloureda/zoom-mentor-meeting-uploader/blob/mastergit/img/1_google_drive.png")
 
 2. Download the crendetials file (`credentials.json`) and save into the working directory of this script
 
@@ -64,9 +64,11 @@ Go to https://developers.google.com/drive/api/v3/quickstart/python
 
 4. Get the sharable Link for the mp4 video
 
-5. Creates a file (if not exists) called `calls_info_{today_date}` appending student email and link
+5. Moves local file in zoom folder into "students" folder
 
-6. Fill google forms
+6. Creates a file (if not exists) called `calls_info_{today_date}` appending student email and link
+
+7. Fill google forms
    - Install selenium
    - pass student_email variable as 2nd argument
    - Add MENTOR_EMAIL constant

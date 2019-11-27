@@ -34,18 +34,6 @@ def open_zoom_meeting(url):
     webbrowser.open(url)
 
 
-def get_folder_name(folder_path):
-    return folder_path.split("/")[-1]
-
-
-def check_new_folder_to_be_zoom_video(folder_name):
-    """
-    I just check for folders that begin with todays date ...
-    2019-11-19 12.57.49 Fiyin Adebayo and carlos loureda parrado 917893445
-    """
-    return folder_name.startswith(str(date.today()))
-
-
 def login_google_drive():
     """Shows basic usage of the Drive v3 API.
     Prints the names and ids of the first 10 files the user has access to.
@@ -167,6 +155,16 @@ def save_into_file(student_email, link):
     f.close()
 
 
+def move_local_folder(folder_path):
+    folder_name = folder_path[len(ZOOM_FOLDER_PATH):]
+    username = get_student_name(folder_path)
+    files = os.listdir(ZOOM_FOLDER_PATH)
+    student_folder = ZOOM_FOLDER_PATH + "/" + username
+    if username not in files:
+        os.makedirs(student_folder)
+    os.rename(folder_path, student_folder+"/"+folder_name)
+
+
 class MyHandler(FileSystemEventHandler):
     """Handler needed to manage file changes in our folder """
     @staticmethod
@@ -180,6 +178,7 @@ class MyHandler(FileSystemEventHandler):
                     print("-> Video recorded at folder_path: ", folder_path)
                     sharable_link = upload_to_google_drive(
                         folder_path, DRIVE_FOLDER_ID)
+                    move_local_folder(folder_path)
                     save_into_file(STUDENT_EMAIL,
                                    sharable_link)
                     google_forms_scapper.open_and_fill_form(
