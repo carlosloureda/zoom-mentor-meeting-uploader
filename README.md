@@ -49,11 +49,14 @@ Go to https://developers.google.com/drive/api/v3/quickstart/python
    > The script will print the final folder when the recorded is finished rendering
 
 3. Upload folder to Drive
+
    - You need the API_KEY for drive and the Google API Key
    - You need to have the folder for zoom meeting apps created and pass it to the scriptÇ:
      - If there is a folder for that student, the script will upload the folder to that folder
      - If there isn't a folder for that student.
    - It will get the sharable link for the .mp4 file so we can paste it on the google forms
+
+4. Get the sharable Link for the mp4 video
 
 ## Ideas for the script
 
@@ -64,7 +67,11 @@ Go to https://developers.google.com/drive/api/v3/quickstart/python
 - Move into proper folder in local
 - Open Google Forms: - Paste the url
 - Add the date for the video recorded
-- Retreive from somwhere
-  - student email
-  - my email
   - Now you only need to answer the questions and submit the project
+
+## To improve
+
+- Don't count on Bin files
+- Retreive from somwhere
+- student email
+- my email

@@ -91,7 +91,6 @@ def upload_to_google_drive(src_folder, parent_folder_id):
         files_in_folder = children["files"]
         dest_folder_id = None
         student_name = get_student_name(src_folder)
-
         # Search for folder for student, if not existant, create it
         for folder in files_in_folder:
             if student_name == folder["name"]:
@@ -106,12 +105,16 @@ def upload_to_google_drive(src_folder, parent_folder_id):
             file = service.files().create(body=file_metadata,
                                           fields='id').execute()
             dest_folder_id = file.get('id')
+            print(
+                f'> Creating folder: {student_name} inside folder: {parent_folder_id}')
         # Create folder for todays call inside student fodler and upload .mp4 file
         if dest_folder_id:
             # TODO: get new folder name
             # TODO: improve to upload eveything besides the mp4
 
             sub_folder = src_folder[len(ZOOM_FOLDER_PATH)+1:]
+            print(
+                f'> Creating folder: {sub_folder} inside folder: {dest_folder_id}')
             file_metadata = {
                 'name': sub_folder,
                 'mimeType': 'application/vnd.google-apps.folder',
@@ -130,7 +133,25 @@ def upload_to_google_drive(src_folder, parent_folder_id):
             file = service.files().create(body=file_metadata,
                                           media_body=media,
                                           fields='id').execute()
-            print('--> File ID: %s' % file.get('id'))
+            fileId = file.get('id')
+            # Grant permission
+            try:
+                permission = service.permissions().create(
+                    fileId=fileId,
+                    body={
+                        "role": 'reader',
+                        "type": 'anyone'
+                    }
+                )
+                webViewLink = service.files().get(
+                    fileId=file.get('id'),
+                    fields="webViewLink"
+                ).execute()
+
+                print('Sharable Link:', webViewLink)
+                return webViewLink
+            except HttpError as error:
+                print('An error occurred: %s' % error)
 
         # upload to that folder
         # return the link for sharing to the video mp4
@@ -146,9 +167,9 @@ class MyHandler(FileSystemEventHandler):
                     video_file = event.dest_path
                     folder_path = video_file[0: video_file.find("zoom_0.mp4")]
                     print("-> Video recorded at folder_path: ", folder_path)
-                    upload_to_google_drive(folder_path, DRIVE_FOLDER_ID)
-                    # 1. upload folder to drive folder
-                    # 2. get link to mp4 video
+                    sharable_link = upload_to_google_drive(
+                        folder_path, DRIVE_FOLDER_ID)
+
                     # 3. move local folder to its own folder
                     # 4. End observer
 
