@@ -34,7 +34,7 @@ Testing on other platforms will be appreciated.
 Go to https://developers.google.com/drive/api/v3/quickstart/python
 
 1. Turn on the Drive API
-   ![turn_on_api]("./img/1_google_drive.png")
+   ![turn_on_api]("https://github.com/carlosloureda/zoom-mentor-meeting-uploader/blob/master/img/1_google_drive.png")
 
 2. Download the crendetials file (`credentials.json`) and save into the working directory of this script
 
