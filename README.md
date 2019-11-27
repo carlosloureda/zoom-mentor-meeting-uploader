@@ -22,6 +22,12 @@ Testing on other platforms will be appreciated.
 
     - On first attempt you will be prompted the google auth page (unauthorized),
     <!-- TODO: will add some images -->
+    Go to Folder of  Google Drive and copy FolderID (last part of the url) and set that value on DRIVE_FOLDER_ID
+
+    - To open Google Form when script ends, set GOOGLE_FORM_URL variable with the google form
+
+    - Install selenium: pip3 install selenium
+        - And drivers: https://selenium-python.readthedocs.io/installation.html#introduction
 
 ### Get Google Drive API
 
@@ -35,7 +41,7 @@ Go to https://developers.google.com/drive/api/v3/quickstart/python
 ## How it works
 
 1. Start the script
-   `python3 index.js https://zoom.us/j/{meetingId}?pwd={password}`
+   `python3 index.js https://zoom.us/j/{meetingId}?pwd={password} {student_email}`
 
    This will open the default browser as if you where clicking the google calendar link.
    You might need to
@@ -58,12 +64,13 @@ Go to https://developers.google.com/drive/api/v3/quickstart/python
 
 4. Get the sharable Link for the mp4 video
 
+5. Fill google forms
+   - Install selenium
+   - pass student_email variable as 2nd argument
+   - Add MENTOR_EMAIL constant
+
 ## Ideas for the script
 
-- Optionally open zoom link
-- listen for new Zoom video recorded
-- Upload it to gogle Drive (on the proper folder)
-- Get url
 - Move into proper folder in local
 - Open Google Forms: - Paste the url
 - Add the date for the video recorded
@@ -73,5 +80,12 @@ Go to https://developers.google.com/drive/api/v3/quickstart/python
 
 - Don't count on Bin files
 - Retreive from somwhere
-- student email
-- my email
+
+- README with more images
+- Video tutorial
+
+# TO DO
+
+- Fix end of script
+- Check file permissions
+- Save links to file with today files

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import webbrowser
-import sys
 from datetime import date
+import sys
 import time
 import os
 # pip3 install watchdog
@@ -14,14 +14,19 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
-
-# ZOOM_MEETING_URL = "https://zoom.us/j/941904988?pwd=WitDeDZsbFljWlozdy9STVkyMEpYUT09"
-ZOOM_FOLDER_PATH = "/home/carlos/Dropbox/Zoom"
-# We want to have access to this file to end the observer
+import google_forms_scapper
 
 SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly',
           'https://www.googleapis.com/auth/drive']
+
+ZOOM_FOLDER_PATH = "/home/carlos/Dropbox/Zoom"
+
 DRIVE_FOLDER_ID = "1IXD1-97R42F5Vz_bBK_47c8_JVuBTP-Y"
+GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfACeIWoEMpixpfz_x_jyEp--A__okmB7VUnvs1BLS9UTCV4w/viewform"
+MENTOR_EMAIL = "carlosloureda@gmail.com"
+
+# Global variables
+STUDENT_EMAIL = ""
 
 
 def open_zoom_meeting(url):
@@ -144,23 +149,22 @@ def upload_to_google_drive(src_folder, parent_folder_id):
                     }
                 )
                 webViewLink = service.files().get(
-                    fileId=file.get('id'),
+                    fileId=fileId,
                     fields="webViewLink"
                 ).execute()
 
-                print('Sharable Link:', webViewLink)
-                return webViewLink
+                print('Sharable Link:', webViewLink["webViewLink"])
+                return webViewLink["webViewLink"]
             except HttpError as error:
                 print('An error occurred: %s' % error)
-
-        # upload to that folder
-        # return the link for sharing to the video mp4
+    return None
 
 
 class MyHandler(FileSystemEventHandler):
     """Handler needed to manage file changes in our folder """
     @staticmethod
     def on_any_event(event):
+        global STUDENT_EMAIL
         if True:
             if event.event_type == 'moved':
                 if event.dest_path.endswith(".mp4"):
@@ -169,6 +173,14 @@ class MyHandler(FileSystemEventHandler):
                     print("-> Video recorded at folder_path: ", folder_path)
                     sharable_link = upload_to_google_drive(
                         folder_path, DRIVE_FOLDER_ID)
+                    google_forms_scapper.open_and_fill_form(
+                        GOOGLE_FORM_URL,
+                        sharable_link,
+                        MENTOR_EMAIL,
+                        STUDENT_EMAIL)
+                    print("here we should end observer")
+                    # TODO: search for a way to close program here
+                    # raise KeyboardInterrupt
 
                     # 3. move local folder to its own folder
                     # 4. End observer
@@ -200,9 +212,10 @@ def main():
         print(">> I couldn't find a credentials.json file with Google Drive API, please see README.md")
     else:
         zoom_url = sys.argv[1]
+        global STUDENT_EMAIL
+        STUDENT_EMAIL = sys.argv[2]
         open_zoom_meeting(zoom_url)
         listen_for_call_end()
-        # upload_to_google_drive("", "")
 
 
 if __name__ == "__main__":
