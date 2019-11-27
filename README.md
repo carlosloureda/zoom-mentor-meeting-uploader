@@ -64,7 +64,9 @@ Go to https://developers.google.com/drive/api/v3/quickstart/python
 
 4. Get the sharable Link for the mp4 video
 
-5. Fill google forms
+5. Creates a file (if not exists) called `calls_info_{today_date}` appending student email and link
+
+6. Fill google forms
    - Install selenium
    - pass student_email variable as 2nd argument
    - Add MENTOR_EMAIL constant
@@ -79,12 +81,10 @@ Go to https://developers.google.com/drive/api/v3/quickstart/python
 ## To improve
 
 - Don't count on Bin files
-- Retreive from somwhere
-
 - README with more images
 - Video tutorial
 
 # TO DO
 
 - Fix end of script
-- Save links to file with today files
+- Refactor and improve code

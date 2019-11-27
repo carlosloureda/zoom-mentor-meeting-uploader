@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import webbrowser
-from datetime import date
+from datetime import datetime
 import sys
 import time
 import os
@@ -160,6 +160,13 @@ def upload_to_google_drive(src_folder, parent_folder_id):
     return None
 
 
+def save_into_file(student_email, link):
+    filename = "calls_info_" + datetime.today().strftime('%m_%d_%Y')
+    f = open(filename, "a")
+    f.write(f'## Student email: {student_email} \n\t> URL: {link}\n\n')
+    f.close()
+
+
 class MyHandler(FileSystemEventHandler):
     """Handler needed to manage file changes in our folder """
     @staticmethod
@@ -173,6 +180,8 @@ class MyHandler(FileSystemEventHandler):
                     print("-> Video recorded at folder_path: ", folder_path)
                     sharable_link = upload_to_google_drive(
                         folder_path, DRIVE_FOLDER_ID)
+                    save_into_file(STUDENT_EMAIL,
+                                   sharable_link)
                     google_forms_scapper.open_and_fill_form(
                         GOOGLE_FORM_URL,
                         sharable_link,
