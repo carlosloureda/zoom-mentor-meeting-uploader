@@ -7,7 +7,6 @@ import os
 # pip3 install watchdog
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-
 import pickle
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -15,15 +14,16 @@ from google.auth.transport.requests import Request
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 import google_forms_scapper
+import json
+import lib.config as config
 
 SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly',
           'https://www.googleapis.com/auth/drive']
 
-ZOOM_FOLDER_PATH = "/home/carlos/Dropbox/Zoom"
-
-DRIVE_FOLDER_ID = "1IXD1-97R42F5Vz_bBK_47c8_JVuBTP-Y"
-GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfACeIWoEMpixpfz_x_jyEp--A__okmB7VUnvs1BLS9UTCV4w/viewform"
-MENTOR_EMAIL = "carlosloureda@gmail.com"
+ZOOM_FOLDER_PATH = ""
+DRIVE_FOLDER_ID = ""
+GOOGLE_FORM_URL = ""
+MENTOR_EMAIL = ""
 
 # Global variables
 STUDENT_EMAIL = ""
@@ -213,12 +213,28 @@ def drive_credentials_exist():
     return os.path.isfile('./credentials.json')
 
 
+def get_constants_from_config_file():
+    """Initializes constants from config file"""
+    global ZOOM_FOLDER_PATH
+    global DRIVE_FOLDER_ID
+    global GOOGLE_FORM_URL
+    global MENTOR_EMAIL
+    with open("./lib/config.json") as json_data_file:
+        config = json.load(json_data_file)
+        ZOOM_FOLDER_PATH=config["constants"]["ZOOM_FOLDER_PATH"]
+        DRIVE_FOLDER_ID=config["constants"]["DRIVE_FOLDER_ID"]
+        GOOGLE_FORM_URL=config["constants"]["GOOGLE_FORM_URL"]
+        MENTOR_EMAIL=config["constants"]["MENTOR_EMAIL"]
+
+
 def main():
     if len(sys.argv) < 2:
         print(">> Please pass the url for the zoom meeting as parameter")
     elif not drive_credentials_exist():
         print(">> I couldn't find a credentials.json file with Google Drive API, please see README.md")
     else:
+        get_constants_from_config_file()
+        config.check_configuration()
         zoom_url = sys.argv[1]
         global STUDENT_EMAIL
         STUDENT_EMAIL = sys.argv[2]

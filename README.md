@@ -90,3 +90,5 @@ Go to https://developers.google.com/drive/api/v3/quickstart/python
 
 - Fix end of script
 - Refactor and improve code
+- Mac is tar.gz not zip Error
+  geckodriver-v0.26.0-macos.tar.gz
