@@ -5,16 +5,19 @@
 
 # pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
+import zipfile
+import urllib.request
 import subprocess
 import sys
 import os
 from pprint import pprint
-
-
-import urllib.request
-from loading_animation import Animation
-
-import zipfile
+# sys.path.append(os.path.abspath(os.path.join('..', 'utils')))
+# try:
+# from utils.loading_animation import Animation
+import lib.loading_animations as loading_animations
+# except e:
+#     print("algo pasó: ", e)
+#     pass
 
 # Required python and pip
 
@@ -42,6 +45,42 @@ def checkand_download_modules():
     for package in required_packages:
         if not package in installed_packages:
             install(package)
+
+
+def ask_for_zoom_folder_path():
+    questions = [
+        inquirer.Text('ZOOM_FOLDER_PATH',
+                      message="Please add the zoom folder path")
+    ]
+    answers = inquirer.prompt(questions)
+    return answers["ZOOM_FOLDER_PATH"]
+
+
+def ask_for_drive_folder_id():
+    questions = [
+        inquirer.Text('DRIVE_FOLDER_ID',
+                      message="Add ID of google drive folder to upload videos")
+    ]
+    answers = inquirer.prompt(questions)
+    return answers["DRIVE_FOLDER_ID"]
+
+
+def ask_for_google_form_url():
+    questions = [
+        inquirer.Text('GOOGLE_FORM_URL',
+                      message="Add URl for Google Forms")
+    ]
+    answers = inquirer.prompt(questions)
+    return answers["GOOGLE_FORM_URL"]
+
+
+def ask_mentor_email():
+    questions = [
+        inquirer.Text('MENTOR_EMAIL',
+                      message="Add your mentor email")
+    ]
+    answers = inquirer.prompt(questions)
+    return answers["MENTOR_EMAIL"]
 
 
 def check_and_download_webdriver():
@@ -91,7 +130,7 @@ def check_and_download_webdriver():
             }
         },
         "Firefox": {
-            ">answers[=60": {
+            ">=60": {
                 "Linux": {
                     "32": "https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux32.tar.gz",
                     "64": "https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz"
@@ -168,29 +207,32 @@ def check_and_download_webdriver():
     url_splitted = url.split("/")
 
     file_name = url_splitted[len(url_splitted)-1]
-    animation = Animation("Downloading webdriver: " + file_name,
-                          "Finished Downloading webdriver!")
+    animation = loading_animations.Animation("Downloading webdriver: " + file_name,
+                                             "Finished Downloading webdriver!")
     animation.start()
 
     urllib.request.urlretrieve(url, file_name)
     animation.stop()
 
     # Extract zip file
-    animation = Animation("Uncompressing webdriver",
-                          "Finished uncompression of webdriver!")
+    animation = loading_animations.Animation("Uncompressing webdriver",
+                                             "Finished uncompression of webdriver!")
     animation.start()
 
     with zipfile.ZipFile(file_name, 'r') as zip_ref:
         zip_ref.extractall("./")
-    os.remove(file_name)
-    animation.stop()
+        os.remove(file_name)
+        animation.stop()
+
+        answers["webdriver_name"] = zip_ref.namelist()[0]
+    return answers
     # print("uncompressing ...")
     # zipfile = ZipFile(BytesIO(resp.read()))
     # zipfile.namelist()
 
 
-checkand_download_modules()
-check_and_download_webdriver()
+# checkand_download_modules()
+# check_and_download_webdriver()
 # check constants config
 
 # Download and unzip
