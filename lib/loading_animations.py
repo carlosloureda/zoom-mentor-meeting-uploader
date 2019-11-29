@@ -2,30 +2,6 @@ import itertools
 import threading
 import time
 import sys
-# sys.path.append(os.path.abspath(os.path.join('..', 'utils')))
-# show_animation = True
-
-
-# def _animate(loadingMessage="loading", successMessage="Done!"):
-#     global show_animation
-#     for c in itertools.cycle(['|', '/', '-', '\\']):
-#         if not show_animation:
-#             break
-#         sys.stdout.write('\r' + loadingMessage + ' ' + c)
-#         sys.stdout.flush()
-#         time.sleep(0.1)
-#     sys.stdout.write('\n'+successMessage+'     \n')
-
-
-# def show_loading_animation(loadingMessage, successMessage):
-#     t = threading.Thread(target=_animate, args=(
-#         loadingMessage, successMessage))
-#     t.start()
-
-
-# def hide_loading_animation():
-#     global show_animation
-#     show_animation = False
 
 
 class AnimationTask:
@@ -59,9 +35,3 @@ class Animation:
 
     def stop(self):
         self.animation_task.terminate()
-
-# animation = Animation("Downloading webdriver",
-#                       "Finished Downloading webdriver!")
-# animation.start()
-# time.sleep(3)
-# animation.stop()
