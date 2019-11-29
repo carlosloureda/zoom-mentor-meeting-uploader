@@ -1,4 +1,5 @@
 # pip3 install selenium
+# TODO: Make this work with new configuration
 from selenium.webdriver import Chrome
 # from selenium.webdriver import Firefox
 from selenium.webdriver.common.by import By
@@ -8,7 +9,8 @@ import sys
 
 
 def open_and_fill_form(url, link, mentor_email, student_email=""):
-    webdriver = "./chromedriver"
+    # TODO: make this come from the CONSTANTS
+    webdriver = "chromedriver"
     driver = Chrome(webdriver)
     driver.get(url)
     # Get my email input
