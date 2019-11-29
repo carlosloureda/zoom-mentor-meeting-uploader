@@ -7,18 +7,11 @@ import os
 # pip3 install watchdog
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-import pickle
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 import google_forms_scapper
 import json
 import lib.config as config
-
-SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly',
-          'https://www.googleapis.com/auth/drive']
+import lib.google_drive as google_drive
 
 ZOOM_FOLDER_PATH = ""
 DRIVE_FOLDER_ID = ""
@@ -71,83 +64,6 @@ def get_student_name(folder):
     return sub_folder[_from+1: _to]
 
 
-def upload_to_google_drive(src_folder, parent_folder_id):
-    service = login_google_drive()
-
-    # search for folders in google drive
-    children = service.files().list(
-        q="'" + parent_folder_id + "' in parents",
-        spaces='drive',
-    ).execute()
-
-    if children:
-        files_in_folder = children["files"]
-        dest_folder_id = None
-        student_name = get_student_name(src_folder)
-        # Search for folder for student, if not existant, create it
-        for folder in files_in_folder:
-            if student_name == folder["name"]:
-                dest_folder_id = folder["id"]
-                break
-        if not dest_folder_id:
-            file_metadata = {
-                'name': student_name,
-                'mimeType': 'application/vnd.google-apps.folder',
-                'parents': [parent_folder_id]
-            }
-            file = service.files().create(body=file_metadata,
-                                          fields='id').execute()
-            dest_folder_id = file.get('id')
-            print(
-                f'> Creating folder: {student_name} inside folder: {parent_folder_id}')
-        # Create folder for todays call inside student fodler and upload .mp4 file
-        if dest_folder_id:
-            # TODO: get new folder name
-            # TODO: improve to upload eveything besides the mp4
-
-            sub_folder = src_folder[len(ZOOM_FOLDER_PATH)+1:]
-            print(
-                f'> Creating folder: {sub_folder} inside folder: {dest_folder_id}')
-            file_metadata = {
-                'name': sub_folder,
-                'mimeType': 'application/vnd.google-apps.folder',
-                'parents': [dest_folder_id]
-            }
-            file = service.files().create(body=file_metadata,
-                                          fields='id').execute()
-            dest_folder_id = file.get('id')
-
-            file_metadata = {
-                'name': 'zoom_0.mp4',
-                'parents': [dest_folder_id]
-            }
-            media = MediaFileUpload(src_folder+"/zoom_0.mp4",
-                                    mimetype='video/mp4')
-            file = service.files().create(body=file_metadata,
-                                          media_body=media,
-                                          fields='id').execute()
-            fileId = file.get('id')
-            # Grant permission
-            try:
-                service.permissions().create(
-                    fileId=fileId,
-                    body={
-                        "role": 'reader',
-                        "type": 'anyone'
-                    }
-                ).execute()
-                webViewLink = service.files().get(
-                    fileId=fileId,
-                    fields="webViewLink"
-                ).execute()
-
-                print('Sharable Link:', webViewLink["webViewLink"])
-                return webViewLink["webViewLink"]
-            except HttpError as error:
-                print('An error occurred: %s' % error)
-    return None
-
-
 def save_into_file(student_email, link):
     filename = "calls_info_" + datetime.today().strftime('%m_%d_%Y')
     f = open(filename, "a")
@@ -176,8 +92,8 @@ class MyHandler(FileSystemEventHandler):
                     video_file = event.dest_path
                     folder_path = video_file[0: video_file.find("zoom_0.mp4")]
                     print("-> Video recorded at folder_path: ", folder_path)
-                    sharable_link = upload_to_google_drive(
-                        folder_path, DRIVE_FOLDER_ID)
+                    sharable_link = google_drive.upload_to_google_drive(
+                        folder_path, DRIVE_FOLDER_ID, ZOOM_FOLDER_PATH, get_student_name(src_folder))
                     move_local_folder(folder_path)
                     save_into_file(STUDENT_EMAIL,
                                    sharable_link)
@@ -221,10 +137,10 @@ def get_constants_from_config_file():
     global MENTOR_EMAIL
     with open("./lib/config.json") as json_data_file:
         config = json.load(json_data_file)
-        ZOOM_FOLDER_PATH=config["constants"]["ZOOM_FOLDER_PATH"]
-        DRIVE_FOLDER_ID=config["constants"]["DRIVE_FOLDER_ID"]
-        GOOGLE_FORM_URL=config["constants"]["GOOGLE_FORM_URL"]
-        MENTOR_EMAIL=config["constants"]["MENTOR_EMAIL"]
+        ZOOM_FOLDER_PATH = config["constants"]["ZOOM_FOLDER_PATH"]
+        DRIVE_FOLDER_ID = config["constants"]["DRIVE_FOLDER_ID"]
+        GOOGLE_FORM_URL = config["constants"]["GOOGLE_FORM_URL"]
+        MENTOR_EMAIL = config["constants"]["MENTOR_EMAIL"]
 
 
 def main():
