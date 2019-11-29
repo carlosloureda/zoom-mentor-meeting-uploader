@@ -145,6 +145,25 @@ def get_constants_from_config_file():
         MENTOR_EMAIL = config["constants"]["MENTOR_EMAIL"]
 
 
+def check_and_parse_zoom_url(zoom_url):
+    """Checks if we have a proper zoom_url, if it has the google prefix it removes it and shows a proper zoom url"""
+    google_url_pref = "https://www.google.com/url?q="
+    while True:
+        if "https://zoom.us" in zoom_url:
+            if google_url_pref in zoom_url:
+                zoom_url = zoom_url[len(google_url_pref):]
+            break
+        else:
+            print("[ERROR] Link provided is not an Zoom meeting link")
+            questions = [
+                inquirer.Text('zoom_url',
+                              message="Please a correct zoom url:")
+            ]
+            zoom_url = inquirer.prompt(questions)["zoom_url"]
+    return zoom_url
+
+
+
 def main():
     global STUDENT_EMAIL
     zoom_url = ""
@@ -159,7 +178,7 @@ def main():
                               message="Please paste the zoom url for this call")
             ]
             answers = inquirer.prompt(questions)
-            zoom_url = answers["zoom_url"]
+            zoom_url = check_and_parse_zoom_url(answers["zoom_url"])
         questions = [
             inquirer.Text('student_email',
                           message="Please add student email")
@@ -167,7 +186,7 @@ def main():
         answers = inquirer.prompt(questions)
         STUDENT_EMAIL = answers["student_email"] if "student_email" in answers else ""
     else:
-        zoom_url = sys.argv[1]
+        zoom_url = check_and_parse_zoom_url(sys.argv[1])
         STUDENT_EMAIL = sys.argv[2]
     get_constants_from_config_file()
     config.check_configuration()
