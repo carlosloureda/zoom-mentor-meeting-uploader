@@ -85,29 +85,30 @@ class MyHandler(FileSystemEventHandler):
     """Handler needed to manage file changes in our folder """
     @staticmethod
     def on_any_event(event):
+        # print("event: ", event)
         global STUDENT_EMAIL
-        if True:
-            if event.event_type == 'moved':
-                if event.dest_path.endswith(".mp4"):
-                    video_file = event.dest_path
-                    folder_path = video_file[0: video_file.find("zoom_0.mp4")]
-                    print("-> Video recorded at folder_path: ", folder_path)
-                    sharable_link = google_drive.upload_to_google_drive(
-                        folder_path, DRIVE_FOLDER_ID, ZOOM_FOLDER_PATH, get_student_name(src_folder))
-                    move_local_folder(folder_path)
-                    save_into_file(STUDENT_EMAIL,
-                                   sharable_link)
-                    google_forms_scapper.open_and_fill_form(
-                        GOOGLE_FORM_URL,
-                        sharable_link,
-                        MENTOR_EMAIL,
-                        STUDENT_EMAIL)
-                    print("here we should end observer")
-                    # TODO: search for a way to close program here
-                    # raise KeyboardInterrupt
+        if event.event_type == 'moved':
+            # print(">>> MOVED: ", event)
+            if event.dest_path.endswith(".mp4"):
+                video_file = event.dest_path
+                folder_path = video_file[0: video_file.find("zoom_0.mp4")]
+                print("-> Video recorded at folder_path: ", folder_path)
+                sharable_link = google_drive.upload_to_google_drive(
+                    folder_path, DRIVE_FOLDER_ID, ZOOM_FOLDER_PATH, get_student_name(folder_path))
+                move_local_folder(folder_path)
+                save_into_file(STUDENT_EMAIL,
+                               sharable_link)
+                google_forms_scapper.open_and_fill_form(
+                    GOOGLE_FORM_URL,
+                    sharable_link,
+                    MENTOR_EMAIL,
+                    STUDENT_EMAIL)
+                print("here we should end observer")
+                # TODO: search for a way to close program here
+                # raise KeyboardInterrupt
 
-                    # 3. move local folder to its own folder
-                    # 4. End observer
+                # 3. move local folder to its own folder
+                # 4. End observer
 
 
 def listen_for_call_end():

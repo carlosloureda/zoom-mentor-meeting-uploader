@@ -8,7 +8,8 @@ import sys
 
 
 def open_and_fill_form(url, link, mentor_email, student_email=""):
-    webdriver = "./chromedriver"
+    # TODO: make this come from the CONSTANTS
+    webdriver = "chromedriver"
     driver = Chrome(webdriver)
     driver.get(url)
     # Get my email input
