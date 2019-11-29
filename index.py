@@ -12,6 +12,7 @@ import google_forms_scapper
 import json
 import lib.config as config
 import lib.google_drive as google_drive
+import inquirer
 
 ZOOM_FOLDER_PATH = ""
 DRIVE_FOLDER_ID = ""
@@ -145,18 +146,33 @@ def get_constants_from_config_file():
 
 
 def main():
-    if len(sys.argv) < 2:
-        print(">> Please pass the url for the zoom meeting as parameter")
-    elif not drive_credentials_exist():
+    global STUDENT_EMAIL
+    zoom_url = ""
+    if not drive_credentials_exist():
         print(">> I couldn't find a credentials.json file with Google Drive API, please see README.md")
+        return
+    if len(sys.argv) < 2:
+        answers = {}
+        while answers == {} or ("zoom_url" in answers and answers["zoom_url"] == ""):
+            questions = [
+                inquirer.Text('zoom_url',
+                              message="Please paste the zoom url for this call")
+            ]
+            answers = inquirer.prompt(questions)
+            zoom_url = answers["zoom_url"]
+        questions = [
+            inquirer.Text('student_email',
+                          message="Please add student email")
+        ]
+        answers = inquirer.prompt(questions)
+        STUDENT_EMAIL = answers["student_email"] if "student_email" in answers else ""
     else:
-        get_constants_from_config_file()
-        config.check_configuration()
         zoom_url = sys.argv[1]
-        global STUDENT_EMAIL
         STUDENT_EMAIL = sys.argv[2]
-        open_zoom_meeting(zoom_url)
-        listen_for_call_end()
+    get_constants_from_config_file()
+    config.check_configuration()
+    open_zoom_meeting(zoom_url)
+    listen_for_call_end()
 
 
 if __name__ == "__main__":
