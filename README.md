@@ -8,7 +8,7 @@ A quick Python/Script to upload a zoom meeting to Google Drive to the proper fol
 
 For running this script you need to have `Python 3` & `pip` installed.
 
-There are other packages that need to be installed, but thankfully the script will install them if you don't install them manually. Let's see the packages needed:
+There are other packages that need to be installed. Let's see the packages needed:
 
 - watchdog:
   `pip install watchdog`
@@ -97,6 +97,8 @@ Gets the sharable link for the .mp4 file so we can paste it on the google forms.
 **7. Fill google forms**
 
 Will fill the first 4 fields of the form: _mentor_email_, _recording_date_, _link_to_video_, _student_email_
+
+I made a little video to explain how it works on [Youtube](https://youtu.be/to_vQ0ZzSlw)
 
 ## KNOWN ISSUES
 
