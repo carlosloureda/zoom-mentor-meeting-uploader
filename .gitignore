@@ -4,3 +4,4 @@ __pycache__/
 calls_info_*
 chromedriver
 geckodriver*
+lib/config.json
