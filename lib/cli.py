@@ -213,7 +213,7 @@ def check_and_download_webdriver():
 def uncompress_webdriver(file_name):
     # Extract zip file
     animation = loading_animations.Animation("Uncompressing webdriver",
-                                             "Finished uncompression of webdriver!")
+                                             "Finished uncompression of webdriver!\n\n")
     animation.start()
     uncompressed_file_name = uncompress_file(file_name)
     animation.stop()

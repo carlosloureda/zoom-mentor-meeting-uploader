@@ -28,19 +28,19 @@ def _check_selenium(config):
 
 def _check_constants(config):
 
-    if config["constants"]["ZOOM_FOLDER_PATH"] == "":
+    while config["constants"]["ZOOM_FOLDER_PATH"] == "":
         answer = cli.ask_for_zoom_folder_path()
         config["constants"]["ZOOM_FOLDER_PATH"] = answer
 
-    if config["constants"]["DRIVE_FOLDER_ID"] == "":
+    while config["constants"]["DRIVE_FOLDER_ID"] == "":
         answer = cli.ask_for_drive_folder_id()
         config["constants"]["DRIVE_FOLDER_ID"] = answer
 
-    if config["constants"]["GOOGLE_FORM_URL"] == "":
+    while config["constants"]["GOOGLE_FORM_URL"] == "":
         answer = cli.ask_for_google_form_url()
         config["constants"]["GOOGLE_FORM_URL"] = answer
 
-    if config["constants"]["MENTOR_EMAIL"] == "":
+    while config["constants"]["MENTOR_EMAIL"] == "":
         answer = cli.ask_mentor_email()
         config["constants"]["MENTOR_EMAIL"] = answer
 

@@ -22,7 +22,8 @@ class AnimationTask:
             sys.stdout.write('\r' + self.loadingMessage + ' ' + c)
             sys.stdout.flush()
             time.sleep(0.1)
-        sys.stdout.write('\r'+self.successMessage+'     \n')
+        sys.stdout.flush()
+        sys.stdout.write('\r\r'+self.successMessage+'     \n')
 
 
 class Animation:
