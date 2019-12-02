@@ -8,7 +8,7 @@ import os
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from googleapiclient.http import MediaFileUpload
-import google_forms_scapper
+import lib.google_forms_scapper as google_forms_scapper
 import json
 import lib.config as config
 import lib.google_drive as google_drive

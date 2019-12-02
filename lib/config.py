@@ -47,11 +47,16 @@ def _check_constants(config):
     update_config_file(config)
 
 
+def get_config():
+    """Retrives config file"""
+    with open(config_file_path) as json_data_file:
+        return json.load(json_data_file)
+    return None
+
+
 def check_configuration():
 
-    with open(config_file_path) as json_data_file:
-        config = json.load(json_data_file)
-
+    config = get_config()
     _check_selenium(config)
     _check_constants(config)
 

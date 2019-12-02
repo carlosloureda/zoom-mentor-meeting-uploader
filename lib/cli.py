@@ -4,21 +4,14 @@
 # googleapiclient
 
 # pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
-
 import zipfile
+import tarfile
 import urllib.request
 import subprocess
 import sys
 import os
 from pprint import pprint
-# sys.path.append(os.path.abspath(os.path.join('..', 'utils')))
-# try:
-# from utils.loading_animation import Animation
 import lib.loading_animations as loading_animations
-# except e:
-#     print("algo pasó: ", e)
-#     pass
-
 # Required python and pip
 
 
@@ -210,26 +203,40 @@ def check_and_download_webdriver():
     animation = loading_animations.Animation("Downloading webdriver: " + file_name,
                                              "Finished Downloading webdriver!")
     animation.start()
-
     urllib.request.urlretrieve(url, file_name)
     animation.stop()
 
+    answers["webdriver_name"] = uncompress_webdriver(file_name)
+    return answers
+
+
+def uncompress_webdriver(file_name):
     # Extract zip file
     animation = loading_animations.Animation("Uncompressing webdriver",
                                              "Finished uncompression of webdriver!")
     animation.start()
+    uncompressed_file_name = uncompress_file(file_name)
+    animation.stop()
+    return uncompressed_file_name
 
-    with zipfile.ZipFile(file_name, 'r') as zip_ref:
-        zip_ref.extractall("./")
+
+def uncompress_file(file_name, remove=True):
+    if (file_name.endswith("zip")):
+        extractor = zipfile.ZipFile(file_name, 'r')
+        uncompressed_file_name = extractor.namelist()[0]
+    elif (file_name.endswith("tar.gz")):
+        extractor = tarfile.open(file_name, "r:gz")
+        uncompressed_file_name = extractor.getnames()[0]
+    elif (file_name.endswith("tar")):
+        extractor = tarfile.open(file_name, "r:")
+        uncompressed_file_name = extractor.getnames()[0]
+
+    extractor.extractall("./")
+    if remove:
         os.remove(file_name)
-        animation.stop()
 
-        answers["webdriver_name"] = zip_ref.namelist()[0]
-    return answers
-    # print("uncompressing ...")
-    # zipfile = ZipFile(BytesIO(resp.read()))
-    # zipfile.namelist()
-
+    extractor.close()
+    return uncompressed_file_name
 
 # checkand_download_modules()
 # check_and_download_webdriver()
