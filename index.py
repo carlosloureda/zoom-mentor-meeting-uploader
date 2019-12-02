@@ -163,13 +163,15 @@ def check_and_parse_zoom_url(zoom_url):
     return zoom_url
 
 
-
 def main():
     global STUDENT_EMAIL
     zoom_url = ""
     if not drive_credentials_exist():
         print(">> I couldn't find a credentials.json file with Google Drive API, please see README.md")
         return
+    get_constants_from_config_file()
+    config.check_configuration()
+
     if len(sys.argv) < 2:
         answers = {}
         while answers == {} or ("zoom_url" in answers and answers["zoom_url"] == ""):
@@ -188,8 +190,7 @@ def main():
     else:
         zoom_url = check_and_parse_zoom_url(sys.argv[1])
         STUDENT_EMAIL = sys.argv[2]
-    get_constants_from_config_file()
-    config.check_configuration()
+
     open_zoom_meeting(zoom_url)
     listen_for_call_end()
 
