@@ -22,6 +22,9 @@ MENTOR_EMAIL = ""
 # Global variables
 STUDENT_EMAIL = ""
 
+# Globarl variable to stop observer
+g_stop_observer = False
+
 
 def open_zoom_meeting(url):
     """Opens default browser with zoom link, as you would do clicking on the google calendar link"""
@@ -84,10 +87,16 @@ def move_local_folder(folder_path):
 
 class MyHandler(FileSystemEventHandler):
     """Handler needed to manage file changes in our folder """
-    @staticmethod
-    def on_any_event(event):
+
+    def __init__(self, observer):
+        self.observer = observer
+
+    # @staticmethod
+    def on_any_event(self, event):
         # print("event: ", event)
         global STUDENT_EMAIL
+        # Trick to stop observer
+        global g_stop_observer
         if event.event_type == 'moved':
             # print(">>> MOVED: ", event)
             if event.dest_path.endswith(".mp4"):
@@ -104,24 +113,23 @@ class MyHandler(FileSystemEventHandler):
                     sharable_link,
                     MENTOR_EMAIL,
                     STUDENT_EMAIL)
-                print("here we should end observer")
-                # TODO: search for a way to close program here
-                # raise KeyboardInterrupt
-
-                # 3. move local folder to its own folder
-                # 4. End observer
+                self.observer.stop()
+                g_stop_observer = True
 
 
 def listen_for_call_end():
     """Once the meeting starts we want to be listening for the meeting to finish and """
     observer = Observer()
-    event_handler = MyHandler()
+    event_handler = MyHandler(observer)
     observer.schedule(event_handler, ZOOM_FOLDER_PATH, recursive=True)
     observer.start()
     print("File observer started, Interrupt script execution with `Ctrl+C`")
+    global g_stop_observer
     try:
-        while True:
+        while not g_stop_observer:
             time.sleep(10)
+        print("Stop observer")
+        observer.stop()
     except KeyboardInterrupt:
         observer.stop()
 
