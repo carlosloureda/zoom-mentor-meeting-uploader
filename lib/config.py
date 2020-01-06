@@ -20,7 +20,7 @@ def _check_selenium(config):
             "browser": params["browser"],
             "version": params["version"],
             "bits": params["bits"] if "bits" in params else "",
-            "webdriver_name": params["webdriver_name"],
+            "webdriver_name": "./"+params["webdriver_name"],
             "webdriver_in_filesystem": True
         }
         update_config_file(config)

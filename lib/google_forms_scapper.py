@@ -24,7 +24,7 @@ def open_and_fill_form(url, link, mentor_email, student_email=""):
             driver = webdriver.Safari(webdriver_name)
     except:
         print("Error happenede , browser: ", browser)
-        webdriver_name = "chromedriver"
+        webdriver_name = "./chromedriver"
         browser = "Chrome"
         driver = webdriver.Chrome(webdriver_name)
 
