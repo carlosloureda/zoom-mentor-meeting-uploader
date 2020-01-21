@@ -2,6 +2,7 @@ credentials.json
 token.pickle
 __pycache__/
 calls_info_*
+monthly_calls_*
 chromedriver
 geckodriver*
 lib/config.json

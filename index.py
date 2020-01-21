@@ -13,6 +13,7 @@ import json
 import lib.config as config
 import lib.google_drive as google_drive
 import inquirer
+import pandas as pd
 
 ZOOM_FOLDER_PATH = ""
 DRIVE_FOLDER_ID = ""
@@ -69,10 +70,18 @@ def get_student_name(folder):
 
 
 def save_into_file(student_email, link):
-    filename = "calls_info_" + datetime.today().strftime('%m_%d_%Y')
-    f = open(filename, "a")
-    f.write(f'## Student email: {student_email} \n\t> URL: {link}\n\n')
-    f.close()
+    today = datetime.today()
+    filename = f'calls_info_{today.month}_{today.year}.csv'
+    _dict = {
+        'date': today.strftime('%m/%d/%Y'),
+        'time': today.strftime("%H:%M:%S"),
+        'mentee': student_email,
+        'is_no_show': False,
+        'video_url': link
+    }
+    df = pd.DataFrame.from_records([_dict], index="date")
+    df.to_csv(filename, mode='a',
+              header=False if os.path.exists(filename) else True)
 
 
 def move_local_folder(folder_path):
