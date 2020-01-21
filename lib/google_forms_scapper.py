@@ -22,8 +22,8 @@ def open_and_fill_form(url, link, mentor_email, student_email=""):
             driver = webdriver.Edge(webdriver_name)
         elif browser == "Safari":
             driver = webdriver.Safari(webdriver_name)
-    except:
-        print("Error happenede , browser: ", browser)
+    except BaseException as e:
+        print("Error happeneded , browser: ", browser, " e: ", e)
         webdriver_name = "./chromedriver"
         browser = "Chrome"
         driver = webdriver.Chrome(webdriver_name)

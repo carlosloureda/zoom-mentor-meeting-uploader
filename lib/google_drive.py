@@ -111,7 +111,8 @@ def upload_to_google_drive(src_folder, parent_folder_id, path, student_name):
                 f'> Creating folder: {student_name} inside folder: {parent_folder_id}')
         # Create folder for todays call inside student fodler and upload .mp4 file
         if dest_folder_id:
-            sub_folder = src_folder[len(path)+1:]
+            # sub_folder = src_folder[len(path)+1:]
+            sub_folder = src_folder[src_folder.find('//')+2:]
             print(
                 f'> Creating folder: {sub_folder} inside folder: {dest_folder_id}')
             dest_folder_id = create_folder(service, sub_folder, dest_folder_id)

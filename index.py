@@ -82,7 +82,9 @@ def move_local_folder(folder_path):
     student_folder = ZOOM_FOLDER_PATH + "/" + username
     if username not in files:
         os.makedirs(student_folder)
-    os.rename(folder_path, student_folder+"/"+folder_name)
+    output_path = student_folder+"/"+folder_name
+    os.rename(folder_path, output_path)
+    return output_path, username
 
 
 class MyHandler(FileSystemEventHandler):
@@ -97,15 +99,22 @@ class MyHandler(FileSystemEventHandler):
         global STUDENT_EMAIL
         # Trick to stop observer
         global g_stop_observer
+        # 1. When a new file is created or moved
         if event.event_type == 'moved':
-            # print(">>> MOVED: ", event)
+            # 2. If it is a .mp4 file !!!
             if event.dest_path.endswith(".mp4"):
+                # 3. Get the new created file name
                 video_file = event.dest_path
                 folder_path = video_file[0: video_file.find("zoom_0.mp4")]
                 print("-> Video recorded at folder_path: ", folder_path)
+
+                # 4. Create a new folder to move this folder
+                output_path, username = move_local_folder(folder_path)
+
+                # 5. Begin upload to google drive
                 sharable_link = google_drive.upload_to_google_drive(
-                    folder_path, DRIVE_FOLDER_ID, ZOOM_FOLDER_PATH, get_student_name(folder_path))
-                move_local_folder(folder_path)
+                    output_path, DRIVE_FOLDER_ID, ZOOM_FOLDER_PATH, username)
+
                 save_into_file(STUDENT_EMAIL,
                                sharable_link)
                 google_forms_scapper.open_and_fill_form(
@@ -205,3 +214,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# https://zoom.us/j/398041960?pwd%3DdWU2YW1ob28rRVpJL2VmVWxheVhCZz09&sa=D&usd=2&usg=AOvVaw1n-Bzl5abikHd-UbEjpEMD
+# 2020-01-20 13.29.15 Lacramioara and carlos loureda parrado 398041960
