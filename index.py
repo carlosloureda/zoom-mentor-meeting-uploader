@@ -95,33 +95,15 @@ class MyHandler(FileSystemEventHandler):
 
     # @staticmethod
     def on_any_event(self, event):
-        # print("event: ", event)
-        global STUDENT_EMAIL
         # Trick to stop observer
         global g_stop_observer
+        global video_file
         # 1. When a new file is created or moved
         if event.event_type == 'moved':
             # 2. If it is a .mp4 file !!!
             if event.dest_path.endswith(".mp4"):
                 # 3. Get the new created file name
                 video_file = event.dest_path
-                folder_path = video_file[0: video_file.find("zoom_0.mp4")]
-                print("-> Video recorded at folder_path: ", folder_path)
-
-                # 4. Create a new folder to move this folder
-                output_path, username = move_local_folder(folder_path)
-
-                # 5. Begin upload to google drive
-                sharable_link = google_drive.upload_to_google_drive(
-                    output_path, DRIVE_FOLDER_ID, ZOOM_FOLDER_PATH, username)
-
-                save_into_file(STUDENT_EMAIL,
-                               sharable_link)
-                google_forms_scapper.open_and_fill_form(
-                    GOOGLE_FORM_URL,
-                    sharable_link,
-                    MENTOR_EMAIL,
-                    STUDENT_EMAIL)
                 self.observer.stop()
                 g_stop_observer = True
 
@@ -134,6 +116,7 @@ def listen_for_call_end():
     observer.start()
     print("File observer started, Interrupt script execution with `Ctrl+C`")
     global g_stop_observer
+    global video_file
     try:
         while not g_stop_observer:
             time.sleep(10)
@@ -141,6 +124,27 @@ def listen_for_call_end():
         observer.stop()
     except KeyboardInterrupt:
         observer.stop()
+    print(">>> NOW THE MAGIC BEGINS <<<")
+    # video_file = event.dest_path
+    folder_path = video_file[0: video_file.find("zoom_0.mp4")]
+    print("-> Video recorded at folder_path: ", folder_path)
+
+    # 4. Create a new folder to move this folder
+    output_path, username = move_local_folder(folder_path)
+
+    # 5. Begin upload to google drive
+    sharable_link = google_drive.upload_to_google_drive(
+        output_path, DRIVE_FOLDER_ID, ZOOM_FOLDER_PATH, username)
+
+    save_into_file(STUDENT_EMAIL,
+                   sharable_link)
+    google_forms_scapper.open_and_fill_form(
+        GOOGLE_FORM_URL,
+        sharable_link,
+        MENTOR_EMAIL,
+        STUDENT_EMAIL)
+
+    print(">>> PROGRAM FINISHED <<<")
 
 
 def drive_credentials_exist():
